@@ -68,28 +68,12 @@ describe Movie do
       )
     }
 
-    let(:customer_2) { Customer.create(
-      name: 'Mercury',
-      registered_at: Date.parse('1994-11-12'),
-      address: '11111 W 5th St',
-      city: 'Seattle',
-      state: 'Washington',
-      postal_code: '21090',
-      phone: '555-867-5309'
-      )
-    }
-
     it 'must relate to a customer' do
       movie.customers << customer_1
-      movie.customers << customer_2
 
       expect(movie).must_respond_to :customers
-      expect(movie.customers.count).must_equal 2
       expect(movie.customers.first).must_equal customer_1
     end
-
-    # it 'can set the customers' do
-    # end
 
   end
 
