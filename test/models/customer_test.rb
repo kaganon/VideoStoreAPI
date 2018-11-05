@@ -4,7 +4,7 @@ describe Customer do
   # VALIDATIONS
   describe 'validations' do
     let(:customer) { Customer.create(
-      name: "Mickey"
+      name: "Mickey",
       registered_at: Date.parse('2020-11-01'),
       address: '1234 W. 5th Street',
       city: "Avondale",
@@ -74,7 +74,7 @@ describe Customer do
   # RELATIONS
   describe 'Relations' do
     let(:customer) { Customer.create(
-      name: "Mickey"
+      name: "Mickey",
       registered_at: Date.parse('2020-11-01'),
       address: '1234 W. 5th Street',
       city: "Avondale",
