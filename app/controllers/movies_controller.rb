@@ -29,7 +29,7 @@ class MoviesController < ApplicationController
 
   def movie_params
     # How do I test this?
-    params.require(:movie).permit(:id, :title, :overview, :release_date, :inventory)
+    params.permit(:title, :overview, :release_date, :inventory)
   end
 
   def get_json(movie_data)
