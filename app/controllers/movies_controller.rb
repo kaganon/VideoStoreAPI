@@ -25,6 +25,15 @@ class MoviesController < ApplicationController
     end
   end
 
+  def checkout
+    movie = Movie.find_by(id: params[:id] )
+
+
+  end
+
+  def checkin
+  end
+
   private
 
   def movie_params

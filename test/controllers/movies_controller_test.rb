@@ -2,64 +2,74 @@ require "test_helper"
 require 'pry'
 
 describe MoviesController do
-  # it "must be a real test" do
-  #   flunk "Need real tests"
-  # end
+
+  MOVIE_FIELDS = %w(id title release_date).sort
+
+  #helper method used to DRY up code
+  def check_response(expected_type:, expected_status: :success)
+    must_respond_with expected_status
+    expect(response.header['Content-Type']).must_include 'json'
+
+    body = JSON.parse(response.body)
+    expect(body).must_be_kind_of expected_type
+    return body
+  end
+
   describe "index" do
     it "should get index" do
       # Act
       get movies_path
 
       # Assert
-      must_respond_with :success
+      body = check_response(expected_type: Array)
+
+      expect(body.length).must_equal Movie.count
+
+      #test what is rendered in JSON => returned
+      body.each do |movie|
+        expect(movie.keys.sort).must_equal MOVIE_FIELDS
+      end
+    end
+
+    it "returns an empty array when there are no movies" do
+      #arrange
+      Movie.destroy_all
+
+      #act - invoke controller action by calling path
+      get movies_path
+
+      #assert
+      body = check_response(expected_type: Array)
+      expect(body).must_equal []
     end
   end
 
   describe "create" do
-    it "can create a movie with valid data" do
-      movie_data = {
-        movie: {
-          title: "test title",
-          overview: "test overview",
-          release_date: Date.parse("2018-04-12"),
-          inventory: 10
-        }
+    let(:movie_data) {
+      {
+        title: "test title",
+        overview: "test overview",
+        release_date: Date.parse("2018-04-12"),
+        inventory: 10
       }
+    }
 
-      # Assumptions
-      Movie.create(movie_data[:movie]).must_be :valid?, "Movie data wasn't invalid. Please come fix this test"
+    it "creates a new movie given valid data" do
 
-      # Act
       expect {
         post movies_path, params: movie_data
       }.must_change('Movie.count', +1)
-      # Assert
+
+
+      body = JSON.parse(response.body)
+      expect(body).must_be_kind_of Hash
+      expect(body).must_include "id"
+
+      movie = Movie.find(body["id"].to_i)
+
+      expect(movie.title).must_equal movie_data[:title]
       must_respond_with :success
     end
-
-    it "does not create a new movie w/ invalid data" do
-      movie_data = {
-        movie: {
-          title: "",
-          overview: "test overview",
-          release_date: Date.parse("2018-04-12"),
-          inventory: 10
-        }
-      }
-
-      # Assumptions
-      film = Movie.create(movie_data[:movie]).wont_be :valid?, "Movie data wasn't invalid. Please come fix this test"
-
-      # Act
-      expect {
-        post movies_path, params: movie_data
-      }.wont_change('Movie.count')
-
-      # Assert
-      must_respond_with :bad_request
-
-    end
   end
-
 
 end
