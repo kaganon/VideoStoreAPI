@@ -5,12 +5,7 @@ describe Movie do
 
   # VALIDATIONS
   describe 'validations' do
-    let(:movie) { Movie.create(
-      title: 'Rails on Rails on Rails',
-      overview: 'Railly railly great movie about rails',
-      release_date: Date.parse('2020-11-01'),
-      inventory: 2)
-    }
+    let(:movie) { movies(:movie_1) }
 
     it 'is invalid without a title' do
       movie.title = nil
@@ -50,29 +45,15 @@ describe Movie do
 
   # RELATIONS
   describe 'Relations' do
-    let(:movie) { Movie.create(
-      title: 'Rails on Rails on Rails',
-      overview: 'Railly railly great movie about rails',
-      release_date: Date.parse('2020-11-01'),
-      inventory: 2)
-    }
+    let(:movie) { movies(:movie_1) }
 
-    let(:customer_1) { Customer.create(
-      name: 'Freddy',
-      registered_at: Date.parse('1994-07-12'),
-      address: '1234 W 5th St',
-      city: 'Seattle',
-      state: 'Washington',
-      postal_code: '90210',
-      phone: '111-222-3455'
-      )
-    }
+    let(:becky) { customers(:customer_1) }
 
     it 'must relate to a customer' do
-      movie.customers << customer_1
+      movie.customers << becky
 
       expect(movie).must_respond_to :customers
-      expect(movie.customers.first).must_equal customer_1
+      expect(movie.customers.first).must_equal becky
     end
 
   end
