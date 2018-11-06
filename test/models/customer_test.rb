@@ -3,16 +3,7 @@ require "test_helper"
 describe Customer do
   # VALIDATIONS
   describe 'validations' do
-    let(:customer) { Customer.create(
-      name: "Mickey",
-      registered_at: Date.parse('2020-11-01'),
-      address: '1234 W. 5th Street',
-      city: "Avondale",
-      state: "Arizona",
-      postal_code: "90210",
-      phone: "555-867-5309"
-    )
-    }
+    let(:customer) { customers(:customer_1) }
 
     it 'is invalid without a name' do
       customer.name = nil
@@ -73,34 +64,16 @@ describe Customer do
 
   # RELATIONS
   describe 'Relations' do
-    let(:customer) { Customer.create(
-      name: "Mickey",
-      registered_at: Date.parse('2020-11-01'),
-      address: '1234 W. 5th Street',
-      city: "Avondale",
-      state: "Arizona",
-      postal_code: "90210",
-      phone: "555-867-5309"
-    )
-    }
+    let(:customer) { customers(:customer_1) }
 
-    let(:movie_1) { Movie.create(
-      title: 'Five Nights at Freddys',
-      release_date: Date.parse('1994-07-12'),
-      overview: 'Scariness on film reel',
-      inventory: 5
-      )
-    }
+    let(:movie) { movies(:movie_1) }
 
     it 'must relate to a customer' do
-      customer.movies << movie_1
+      customer.movies << movie
 
       expect(customer).must_respond_to :movies
-      expect(customer.movies.first).must_equal movie_1
+      expect(customer.movies.first).must_equal movie
     end
-
-    # it 'can set the customers' do
-    # end
 
   end
 end
