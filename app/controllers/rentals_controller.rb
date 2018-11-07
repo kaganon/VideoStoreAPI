@@ -27,7 +27,6 @@ class RentalsController < ApplicationController
       end
 
     else
-      # this movie is not available to rent
       render_error(:bad_request ["No rental inventory available for #{movie.title}"])
     end
   end
