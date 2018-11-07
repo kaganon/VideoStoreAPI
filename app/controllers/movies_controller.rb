@@ -3,15 +3,15 @@ class MoviesController < ApplicationController
   def index
     movies = Movie.all
 
-    render json: movies_json(movies), status: :ok
+    render json: get_json(movies), status: :ok
   end
 
   def show
     movie = Movie.find_by(id: params[:id] )
     if movie
-      render json: movie_json(movie), status: :ok
+      render json: get_json(movie), status: :ok
     else
-      render_error(:not_found, { movie_id: ["no such movie exists"] })
+      render_error(:not_found, { movie_id: ["No such movie exists"] })
     end
   end
 
@@ -32,13 +32,9 @@ class MoviesController < ApplicationController
     params.permit(:title, :overview, :release_date, :inventory, :available_inventory)
   end
 
-  def movies_json(movie_data)
-    # How do I test this?
-    return movie_data.as_json(only: [:id, :title, :release_date] )
-  end
 
-  def movie_json(movie_data)
+  def get_json(movie_data)
     # How do I test this?
-    return movie_data.as_json(only: [:id, :title, :overview, :release_date, :inventory, :available_inventory] )
+    return movie_data.as_json(only: [:id, :title, :overview, :release_date, :inventory], methods: :available_inventory )
   end
 end

@@ -1,5 +1,6 @@
 class RentalsController < ApplicationController
 
+  # JUST FOR DEBUGGING
   def index
     rentals = Rental.all
 
@@ -9,53 +10,39 @@ class RentalsController < ApplicationController
   def checkout
     rental = Rental.new(rental_params)
 
-    movie = rental.movie
-    customer = rental.customer
-    date = Date.today
+    if rental.is_available?
 
-    if movie.available_inventory > 0
+      rental.update_check_out_date
+      rental.update_due_date
 
-      movie.available_inventory -= 1
-      customer.movies_checked_out_count += 1
-      rental.checkout_date = date
-      rental.due_date = (date + 7)
-
-      if rental.save && movie.save && customer.save
+      if rental.save
         render json: { rental_id: rental.id }
       else
         render_error(:not_found, rental.errors.messages)
       end
 
     else
-      render_error(:bad_request ["No rental inventory available for #{movie.title}"])
+      render_error(:bad_request, ["No rental inventory available for #{rental.movie.title}"])
     end
   end
 
   def checkin
     customer = Customer.find_by(id: params[:customer_id])
     movie = Movie.find_by(id: params[:movie_id])
-    rental = nil
-    date = Date.today
 
-    customer.rentals.each do |r|
-      if r.movie == movie
-        rental = r
+    rental = customer.find_rental(movie)
+
+    if rental
+      rental.update_checkin_date
+
+      if rental.save
+        render json: { rental_id: rental.id }
+      else
+        render_error(:not_found, rental.errors.messages)
       end
-    end
-
-    rental.checkin_date = date
-    rental.checkout_date = nil
-    rental.due_date = nil
-
-    movie.available_inventory += 1
-    customer.movies_checked_out_count -= 1
-
-    if rental.save && movie.save && customer.save
-      render json: { rental_id: rental.id }
     else
-      render_error(:not_found, rental.errors.messages)
+      render_error(:bad_request, "No rental associated with #{customer.name} and #{movie.title}")
     end
-
   end
 
 
@@ -66,7 +53,7 @@ class RentalsController < ApplicationController
   end
 
   def jsonify(rental_data)
-    return rental_data.as_json()
+    return rental_data.as_json(except: [:created_at, :updated_at])
   end
 
 end
