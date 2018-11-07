@@ -1,4 +1,5 @@
 require "test_helper"
+require "date"
 require 'pry'
 
 describe MoviesController do
@@ -50,11 +51,15 @@ describe MoviesController do
 
       get movie_path(movie.id)
 
-      body = parse_json(expected_type: Hash)
+      body = check_response(expected_type: Hash)
 
-      MOVIE_FIELDS.each do |key|
-        expect(body[key]).must_equal movie[key]
-      end
+      movie.release_date = movie.release_date.to_s
+      movie.save
+
+        MOVIE_FIELDS.each do |key|
+          expect(body[key]).must_equal movie[key]
+        end
+
     end
 
 
@@ -63,7 +68,7 @@ describe MoviesController do
 
       get movie_path(movie_id)
 
-      body = parse_json(expected_type: Hash, expected_status: :not_found)
+      body = check_response(expected_type: Hash, expected_status: :not_found)
 
       expect(body["errors"]).must_include "movie_id"
     end

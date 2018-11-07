@@ -20,7 +20,7 @@ class CustomersController < ApplicationController
   private
 
   def get_json(customer_data)
-    return customer_data.as_json(except: [:address, :city, :state, :created_at, :updated_at])
+    return customer_data.as_json(except: [:address, :city, :state, :created_at, :updated_at], methods: :movies_checked_out_count)
   end
 
 
