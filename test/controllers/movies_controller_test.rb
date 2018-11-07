@@ -44,6 +44,31 @@ describe MoviesController do
     end
   end
 
+  describe 'show' do
+    it 'is a real working route and returns JSON for an existing movie' do
+      movie = Movie.first
+
+      get movie_path(movie.id)
+
+      body = parse_json(expected_type: Hash)
+
+      MOVIE_FIELDS.each do |key|
+        expect(body[key]).must_equal movie[key]
+      end
+    end
+
+
+    it 'returns JSON with an error message and status code for a movie that DNE' do
+      movie_id = Movie.last.id + 1
+
+      get movie_path(movie_id)
+
+      body = parse_json(expected_type: Hash, expected_status: :not_found)
+
+      expect(body["errors"]).must_include "movie_id"
+    end
+  end
+
   describe "create" do
     let(:movie_data) {
       {

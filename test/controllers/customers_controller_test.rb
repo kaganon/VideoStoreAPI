@@ -65,10 +65,6 @@ describe CustomersController do
 
       expect(body["errors"]).must_include "customer_id"
     end
-
   end
-
-
-
 
 end
