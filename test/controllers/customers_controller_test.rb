@@ -2,7 +2,7 @@ require "test_helper"
 
 describe CustomersController do
 
-  CUSTOMER_FIELDS = %w(id name registered_at postal_code phone).sort
+  CUSTOMER_FIELDS = %w(id name movies_checked_out_count registered_at postal_code phone).sort
 
   def parse_json(expected_type:, expected_status: :success)
     must_respond_with expected_status
