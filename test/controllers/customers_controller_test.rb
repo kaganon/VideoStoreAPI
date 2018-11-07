@@ -27,7 +27,7 @@ describe CustomersController do
       end
     end
 
-    it "returns an empty array when there are no pets" do
+    it "returns an empty array when there are no customers" do
       Customer.destroy_all
 
       get customers_path
