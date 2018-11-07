@@ -63,17 +63,5 @@ describe Customer do
 
 
   # RELATIONS
-  describe 'Relations' do
-    let(:customer) { customers(:customer_1) }
 
-    let(:movie) { movies(:movie_1) }
-
-    it 'must relate to a customer' do
-      customer.movies << movie
-
-      expect(customer).must_respond_to :movies
-      expect(customer.movies.first).must_equal movie
-    end
-
-  end
 end
