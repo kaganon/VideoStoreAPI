@@ -1,9 +1,10 @@
 require "test_helper"
+require "date"
 require 'pry'
 
 describe MoviesController do
 
-  MOVIE_FIELDS = %w(id title release_date).sort
+  MOVIE_FIELDS = %w(id title release_date available_inventory inventory overview).sort
 
   #helper method used to DRY up code
   def check_response(expected_type:, expected_status: :success)
@@ -41,6 +42,34 @@ describe MoviesController do
       #assert
       body = check_response(expected_type: Array)
       expect(body).must_equal []
+    end
+  end
+
+  describe 'show' do
+    it 'is a real working route and returns JSON for an existing movie' do
+      movie = Movie.first
+
+      get movie_path(movie.id)
+
+      body = check_response(expected_type: Hash)
+
+      movie.release_date = movie.release_date.to_s
+      movie.save
+
+      MOVIE_FIELDS.each do |key|
+        expect(body[key]).must_equal movie[key]
+      end
+    end
+
+
+    it 'returns JSON with an error message and status code for a movie that DNE' do
+      movie_id = Movie.last.id + 1
+
+      get movie_path(movie_id)
+
+      body = check_response(expected_type: Hash, expected_status: :not_found)
+
+      expect(body["errors"]).must_include "movie_id"
     end
   end
 

@@ -26,6 +26,7 @@ class RentalsController < ApplicationController
     end
   end
 
+
   def checkin
     customer = Customer.find_by(id: params[:customer_id])
     movie = Movie.find_by(id: params[:movie_id])
@@ -55,5 +56,4 @@ class RentalsController < ApplicationController
   def jsonify(rental_data)
     return rental_data.as_json(except: [:created_at, :updated_at])
   end
-
 end

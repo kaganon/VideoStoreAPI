@@ -1,6 +1,7 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 customer_1:
+  id: 1
   name: Jackson
   registered_at: 2015-10-11 12:02:17
   address: 1234 East Street
@@ -10,6 +11,7 @@ customer_1:
   phone: 206-111-2342
 
 customer_2:
+  id: 2
   name: Izzie
   registered_at: 2012-10-22 12:02:17
   address: 4321 West Street

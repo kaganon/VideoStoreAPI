@@ -21,8 +21,4 @@ class Rental < ApplicationRecord
   def update_checkin_date
     return self.checkin_date = DATE
   end
-
-
-
-
 end
