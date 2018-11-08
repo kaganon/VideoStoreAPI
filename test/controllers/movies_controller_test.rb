@@ -4,7 +4,7 @@ require 'pry'
 
 describe MoviesController do
 
-  MOVIE_FIELDS = %w(id title release_date).sort
+  MOVIE_FIELDS = %w(id title release_date available_inventory inventory overview).sort
 
   #helper method used to DRY up code
   def check_response(expected_type:, expected_status: :success)
@@ -56,10 +56,9 @@ describe MoviesController do
       movie.release_date = movie.release_date.to_s
       movie.save
 
-        MOVIE_FIELDS.each do |key|
-          expect(body[key]).must_equal movie[key]
-        end
-
+      MOVIE_FIELDS.each do |key|
+        expect(body[key]).must_equal movie[key]
+      end
     end
 
 

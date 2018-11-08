@@ -58,10 +58,60 @@ describe Customer do
       expect(customer).must_be :valid?
     end
 
-
   end
 
 
   # RELATIONS
+  describe 'relations' do
+    let(:jackson) { customers(:customer_2) }
+    let(:rental) { rentals(:rental_2) }
 
+    it 'can set a rental' do
+      titanic = Movie.first
+      blockbuster = Rental.create(customer: jackson, movie: titanic)
+
+      expect( blockbuster.valid? ).must_equal true
+      expect( blockbuster.customer ).must_equal jackson
+      expect( blockbuster.customer ).must_be_kind_of Customer
+
+    end
+
+    # it 'destroys all rentals when customer is destroyed' do
+    #   jackson.destroy
+    #
+    #   expect{ rental }.must_raise ArgumentError
+    # end
+  end
+
+  # HELPER METHODS
+  describe 'find_rental' do
+    let(:molly) { customers(:customer_1) }
+    let(:movie) { movies(:movie_1) }
+    let(:rental) { rentals(:rental_1) }
+
+    it 'returns a rental if belongs to customer' do
+      expect( molly.find_rental(movie) ).must_equal rental
+    end
+
+    # it 'raises ArgumentError if there are no rentals' do
+    #   rental.destroy
+    #
+    #   expect{ molly.find_rental(movie) }.must_raise ArgumentError
+    # end
+  end
+
+  describe 'movies_checked_out_count' do
+    let(:molly) { customers(:customer_1) }
+    let(:movie) { movies(:movie_1) }
+    let(:rental) { rentals(:rental_1) }
+
+    it "returns zero if checkout.count or checkin.count == zero" do
+
+      molly.rentals.destroy_all
+
+      expect( molly.movies_checked_out_count ).must_equal 0
+      expect( molly.rentals.count ).must_equal 0
+    end
+  end
+  
 end

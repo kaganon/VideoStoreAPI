@@ -6,20 +6,17 @@ movie_1:
   overview: This is a movie all about rails. It's railly railly awesome.
   release_date: 2020-09-02
   inventory: 3
-  available_inventory: 1
 
 movie_2:
   id: 2
   title: Ruby is The Best
   overview: The most amazing movie you will ever see.
   release_date: 2011-01-20
-  inventory: 1
-  available_inventory: 0
+  inventory: 3
 
-movie_inventory_0:
+movie_3:
   id: 3
   title: Rubyist are the best
   overview: The most amazing ruby film you've ever dreamt of.
   release_date: 2012-01-20
-  inventory: 0
-  available_inventory: 0
+  inventory: 5

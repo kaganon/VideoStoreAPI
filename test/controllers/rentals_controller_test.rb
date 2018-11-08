@@ -3,7 +3,7 @@ require "pry"
 
 describe RentalsController do
 
-  RENTAL_FIELDS = %w(checkin_date checkout_date created_at customer_id due_date id movie_id updated_at).sort
+  RENTAL_FIELDS = %w(checkin_date checkout_date customer_id due_date id movie_id).sort
 
   def check_response(expected_type:, expected_status: :success)
     must_respond_with expected_status
@@ -49,7 +49,7 @@ describe RentalsController do
       expect {
         post checkout_path, params: rental_data
       }.must_change('Rental.count', +1)
-      
+
       #assert
       # It creates a new instance of Rental
       # it doesn't not create new instance if customer = bogus data

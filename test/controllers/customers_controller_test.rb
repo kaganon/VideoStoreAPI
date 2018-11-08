@@ -52,7 +52,6 @@ describe CustomersController do
         expect(body[key]).must_equal customer[key]
       end
 
-
     end
 
 

@@ -44,7 +44,32 @@ describe Movie do
 
 
   # RELATIONS
+  describe 'relations' do
+    let(:titanic) { movies(:movie_2) }
 
+    it 'can set a rental' do
+      jackson = Customer.first
+      blockbuster = Rental.create(customer: jackson, movie: titanic)
+
+      expect( blockbuster.valid? ).must_equal true
+      expect( blockbuster.movie ).must_equal titanic
+      expect( blockbuster.movie ).must_be_kind_of Movie
+    end
+  end
+
+  # HELPER METHODS
+  describe 'available_inventory' do
+    let(:titanic) { movies(:movie_1) }
+
+    it 'returns number of movies not checked out' do
+      expect( titanic.available_inventory ).must_equal 1
+    end
+
+    # it 'returns ArgumentError if checked_out equals -4' do
+    # end
+    # it 'returns self.inventory if checked_out equals 0' do
+    # end
+  end
 
 
 end
