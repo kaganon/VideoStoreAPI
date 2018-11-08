@@ -3,7 +3,7 @@ class Movie < ApplicationRecord
   has_many :rentals
 
   def available_inventory
-    checked_out = self.rentals.where.not(checkout_date: nil).count
+    checked_out = self.rentals.where(checkin_date: nil).count
     return self.inventory - checked_out
   end
 
