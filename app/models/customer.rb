@@ -13,13 +13,6 @@ class Customer < ApplicationRecord
   end
 
   def movies_checked_out_count
-    checked_out =
-    self.rentals.empty? ? 0 : self.rentals.where.not(checkout_date: nil).count
-
-    checked_in = self.rentals.empty? ? 0 : self.rentals.where.not(checkin_date: nil).count
-
-    return checked_out - checked_in
+    return self.rentals.where(checkin_date: nil).count
   end
-
-
 end
