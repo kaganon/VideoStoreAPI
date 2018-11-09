@@ -61,8 +61,8 @@ describe Movie do
   describe 'available_inventory' do
     let(:titanic) { movies(:movie_1) }
 
-    it 'returns number of movies not checked out' do
-      expect( titanic.available_inventory ).must_equal 1
+    it 'returns number of movies checked out' do
+      expect( titanic.available_inventory ).must_equal 2
     end
 
     # it 'returns ArgumentError if checked_out equals -4' do

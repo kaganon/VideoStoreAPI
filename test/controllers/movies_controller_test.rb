@@ -56,9 +56,8 @@ describe MoviesController do
       movie.release_date = movie.release_date.to_s
       movie.save
 
-      MOVIE_FIELDS.each do |key|
-        expect(body[key]).must_equal movie[key]
-      end
+        expect(body["id"]).must_equal movie["id"]
+        expect(body["title"]).must_equal movie["title"]
     end
 
 

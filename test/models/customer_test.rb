@@ -92,12 +92,6 @@ describe Customer do
     it 'returns a rental if belongs to customer' do
       expect( molly.find_rental(movie) ).must_equal rental
     end
-
-    # it 'raises ArgumentError if there are no rentals' do
-    #   rental.destroy
-    #
-    #   expect{ molly.find_rental(movie) }.must_raise ArgumentError
-    # end
   end
 
   describe 'movies_checked_out_count' do
@@ -113,5 +107,5 @@ describe Customer do
       expect( molly.rentals.count ).must_equal 0
     end
   end
-  
+
 end

@@ -65,15 +65,6 @@ describe Rental do
     it 'returns true if rental.available_inventory is greater than 0' do
       expect( rental.is_available? ).must_equal true
     end
-
-    # it 'returns as not true if rental is invalid/DNE' do
-    #   rental.movie = nil
-    #   rental.customer = nil
-    #
-    #   result = rental.valid?
-    #
-    #   expect( result ).wont_equal true
-    # end
   end
 
   DATE = Date.today
