@@ -98,12 +98,33 @@ describe RentalsController do
   end
 
   describe 'checkin' do
-    it 'updates the correct rental that matches valid input params' do
-      
+    let(:rental) { rentals(:rental_1) }
+
+    let(:rental_params) {
+      { customer_id: Customer.first.id,
+        movie_id: Movie.first.id
+      }
+    }
+
+    it 'updates the correct rental with valid input params' do
+      checked_out_rental = rental
+
+      checked_out_rental.checkin_date.must_be_nil
+
+      post checkin_path, params: rental_params
+
+      body = parse_json(expected_type: Hash)
+
+      expect(body.keys).must_include "rental_id"
+      expect(checked_out_rental.checkin_date).must_equal Date.today
+
     end
 
+    it "renders bad_request status code and returns JSON with error messages if the rental was not successfully saved" do
+    end
 
-
+    it 'renders not_found and does not save rental if no rental information matches params' do
+    end
 
 
   end
