@@ -38,20 +38,16 @@ describe CustomersController do
     end
   end
 
-
   describe 'show' do
-
+    let(:customer) { customers(:customer_1) }
     it 'is a real working route and returns JSON for an existing customer' do
-      customer = Customer.first
 
       get customer_path(customer.id)
 
       body = parse_json(expected_type: Hash)
 
-      CUSTOMER_FIELDS.each do |key|
-        expect(body[key]).must_equal customer[key]
-      end
-
+      expect( body["id"] ).must_equal customer["id"]
+      expect( body["name"] ).must_equal customer["name"]
     end
 
 

@@ -87,7 +87,6 @@ describe Customer do
     it 'returns a rental if belongs to customer' do
       expect( molly.find_rental(movie) ).must_equal rental
     end
-
   end
 
   describe 'movies_checked_out_count' do
