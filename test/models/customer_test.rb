@@ -1,6 +1,7 @@
 require "test_helper"
 
 describe Customer do
+
   # VALIDATIONS
   describe 'validations' do
     let(:customer) { customers(:customer_1) }
@@ -75,15 +76,9 @@ describe Customer do
       expect( blockbuster.customer ).must_be_kind_of Customer
 
     end
-
-    # it 'destroys all rentals when customer is destroyed' do
-    #   jackson.destroy
-    #
-    #   expect{ rental }.must_raise ArgumentError
-    # end
   end
 
-  # HELPER METHODS
+  # CUSTOM METHODS
   describe 'find_rental' do
     let(:molly) { customers(:customer_1) }
     let(:movie) { movies(:movie_1) }
@@ -93,11 +88,6 @@ describe Customer do
       expect( molly.find_rental(movie) ).must_equal rental
     end
 
-    # it 'raises ArgumentError if there are no rentals' do
-    #   rental.destroy
-    #
-    #   expect{ molly.find_rental(movie) }.must_raise ArgumentError
-    # end
   end
 
   describe 'movies_checked_out_count' do
@@ -113,5 +103,5 @@ describe Customer do
       expect( molly.rentals.count ).must_equal 0
     end
   end
-  
+
 end

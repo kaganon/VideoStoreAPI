@@ -57,7 +57,7 @@ describe Movie do
     end
   end
 
-  # HELPER METHODS
+  # CUSTOM METHODS
   describe 'available_inventory' do
     let(:titanic) { movies(:movie_1) }
 

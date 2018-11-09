@@ -18,11 +18,11 @@ class RentalsController < ApplicationController
       if rental.save
         render json: { rental_id: rental.id }
       else
-        render_error(:not_found, rental.errors.messages)
+        render_error(:bad_request, rental.errors.messages)
       end
 
     else
-      render_error(:bad_request, ["No rental inventory available for #{rental.movie.title}"])
+      render_error(:not_found, rental.errors.messages)
     end
   end
 
@@ -39,10 +39,10 @@ class RentalsController < ApplicationController
       if rental.save
         render json: { rental_id: rental.id }
       else
-        render_error(:not_found, rental.errors.messages)
+        render_error(:bad_request, rental.errors.messages)
       end
     else
-      render_error(:bad_request, "No rental associated with #{customer.name} and #{movie.title}")
+      render_error(:not_found, rental.errors.messages)
     end
   end
 
