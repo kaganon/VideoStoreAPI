@@ -2,6 +2,7 @@ require "test_helper"
 
 describe Rental do
 
+  # VALIDATIONS
   describe 'validations' do
     let(:rental) { rentals(:rental_1) }
 
@@ -20,6 +21,7 @@ describe Rental do
     end
   end
 
+  # RELATIONS
   describe 'relations' do
     let(:rental) { rentals(:rental_2) }
 
@@ -44,6 +46,7 @@ describe Rental do
     end
   end
 
+  # CUSTOM METHODS
   describe 'is_available?' do
     let(:rental) { rentals(:rental_1) }
 

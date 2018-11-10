@@ -3,13 +3,9 @@ class Customer < ApplicationRecord
   has_many :rentals, dependent: :destroy
 
   def find_rental(movie)
-    if self.rentals
-      self.rentals.each do |rental|
-        return rental if rental.movie == movie
-      else return ArgumentError
-      end
+    self.rentals.each do |rental|
+      return rental if rental.movie == movie
     end
-
   end
 
   def movies_checked_out_count

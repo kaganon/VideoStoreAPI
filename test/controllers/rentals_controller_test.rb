@@ -3,9 +3,9 @@ require "pry"
 
 describe RentalsController do
 
-  RENTAL_FIELDS = %w(checkin_date checkout_date customer_id due_date id movie_id).sort
+  RENTAL_FIELDS = %w(id customer_id movie_id checkout_date due_date checkin_date).sort
 
-  def check_response(expected_type:, expected_status: :success)
+  def parse_json(expected_type:, expected_status: :success)
     must_respond_with expected_status
     expect(response.header['Content-Type']).must_include 'json'
 
@@ -14,11 +14,12 @@ describe RentalsController do
     return body
   end
 
+  # delete this
   describe "index" do
     it "is a real working route" do
       get rentals_path
 
-      body = check_response(expected_type: Array)
+      body = parse_json(expected_type: Array)
 
       expect(body.length).must_equal Rental.count
 
@@ -32,50 +33,101 @@ describe RentalsController do
 
       get rentals_path
 
-      body = check_response(expected_type: Array)
+      body = parse_json(expected_type: Array)
 
       expect(body).must_equal []
     end
   end
 
+
   describe 'checkout' do
-    it "creates a new rental with valid data" do
-      rental_data =
-      {
-        customer_id: Customer.first.id,
+    let(:rental_params) {
+      { customer_id: Customer.first.id,
         movie_id: Movie.first.id
       }
+    }
+    it "creates a new rental and returns JSON with an id when give valid input" do
 
       expect {
-        post checkout_path, params: rental_data
+        post checkout_path, params: rental_params
       }.must_change('Rental.count', +1)
 
-      #assert
-      # It creates a new instance of Rental
-      # it doesn't not create new instance if customer = bogus data
-      # it does not create new instance if movie = bogus data
-      # it does not create a new instance if movie.available_inventory < 1 && includes error message line:30
-      # it can create with valid data
-      # changes customer.movie.count
-      # changes movie.available_inventory.count
-      # it sets checkout date
-      # it sets due date
-      # it renders json
-      # it renders error for all, :not_found if invalid
+      body = parse_json(expected_type: Hash)
+
+      expect(body.keys).must_include "rental_id"
+
+      rental = Rental.last
+      expect(rental.customer_id).must_equal rental_params[:customer_id]
+      expect(rental.movie_id).must_equal rental_params[:movie_id]
+      expect(rental.checkout_date).must_equal Date.today
+      expect(rental.due_date).must_equal (Date.today + 7)
+
+    end
+
+    it "renders bad_request status code and returns JSON with error messages if the rental was not successfully saved" do
+
+      original_last_rental = Rental.last
+      rental_params[:customer_id] = 0
+
+      expect {
+        post checkout_path, params: rental_params
+      }.wont_change('Rental.count')
+
+      rental = Rental.last
+      body = parse_json(expected_type: Hash, expected_status: :bad_request)
+      expect(rental).must_equal original_last_rental
+      expect(body.keys).must_include "errors"
+
+    end
+
+    it 'renders not_found and does not save rental if no rental information matches params' do
+
+      original_last_rental = Rental.last
+      rental_params[:movie_id] = nil
+
+      expect {
+        post checkout_path, params: rental_params
+      }.wont_change('Rental.count')
+
+      rental = Rental.last
+      body = parse_json(expected_type: Hash, expected_status: :not_found)
+      expect(rental).must_equal original_last_rental
+      expect(body.keys).must_include "errors"
+
     end
   end
 
   describe 'checkin' do
-    # it finds a customer based on params
-    # it finds a movie based on params
-    # its sets date
-    # it finds assigns rental from customer movies
-    # it assigns checkin date
-    # it changes checkout date
-    # it changes movie.available_inventory.count
-    # it changes customer.movie.count
-    # it renders json
-    # it renders errors, :not_found if invalid
+    let(:rental) { rentals(:rental_1) }
+
+    let(:rental_params) {
+      { customer_id: Customer.first.id,
+        movie_id: Movie.first.id
+      }
+    }
+
+    it 'updates the correct rental with valid input params' do
+      checked_out_rental = rental
+
+      checked_out_rental.checkin_date.must_be_nil
+
+      post checkin_path, params: rental_params
+
+      body = parse_json(expected_type: Hash)
+
+      expect(body.keys).must_include "rental_id"
+      expect(checked_out_rental.checkin_date).must_equal Date.today
+
+    end
+
+    it "renders bad_request status code and returns JSON with error messages if the rental was not successfully saved" do
+    end
+
+    it 'renders not_found and does not save rental if no rental information matches params' do
+    end
+
+
   end
+
 
 end
