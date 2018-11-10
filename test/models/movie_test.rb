@@ -1,6 +1,5 @@
 require "test_helper"
 
-
 describe Movie do
 
   # VALIDATIONS
@@ -38,8 +37,6 @@ describe Movie do
     it 'is valid with all fields present' do
       expect(movie).must_be :valid?
     end
-
-
   end
 
 
@@ -59,16 +56,17 @@ describe Movie do
 
   # CUSTOM METHODS
   describe 'available_inventory' do
-    let(:titanic) { movies(:movie_1) }
+    let(:customer) { customers(:customer_1) }
+    let(:two_available_movies) { movies(:movie_2) }
+    let(:no_available_movie) { movies(:movie_3) }
 
-    it 'returns number of movies checked out' do
-      expect( titanic.available_inventory ).must_equal 2
+    it 'returns the correct available inventory for available movies' do
+      expect( two_available_movies.available_inventory ).must_equal 2
     end
 
-    # it 'returns ArgumentError if checked_out equals -4' do
-    # end
-    # it 'returns self.inventory if checked_out equals 0' do
-    # end
+    it 'returns 0 if all movies checked out' do
+      expect( no_available_movie.available_inventory ).must_equal 0
+    end
   end
 
 

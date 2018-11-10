@@ -19,3 +19,23 @@ customer_2:
   state: MA
   postal_code: 90821
   phone: 123-421-4122
+
+customer_3:
+  id: 3
+  name: Any
+  registered_at: 2012-10-22 12:02:17
+  address: 25 West Street
+  city: Orlando
+  state: FL
+  postal_code: 90844
+  phone: 123-421-4122
+
+customer_4:
+  id: 4
+  name: Many
+  registered_at: 2012-10-22 12:02:17
+  address: 1920 West Roosevelt
+  city: Chicago
+  state: IL
+  postal_code: 90821
+  phone: 555-252-1234
