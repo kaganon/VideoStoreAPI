@@ -22,7 +22,7 @@ class RentalsController < ApplicationController
       end
 
     else
-      render_error(:not_found, rental.errors.messages)
+      render_error(:not_found, { rental_id: ["Cannot checkout movie: no inventory available"] })
     end
   end
 
@@ -31,9 +31,8 @@ class RentalsController < ApplicationController
     customer = Customer.find_by(id: params[:customer_id])
     movie = Movie.find_by(id: params[:movie_id])
 
-    rental = customer.find_rental(movie)
-
-    if rental
+    if customer && movie
+      rental = customer.find_rental(movie)
       rental.update_checkin_date
 
       if rental.save
@@ -42,7 +41,7 @@ class RentalsController < ApplicationController
         render_error(:bad_request, rental.errors.messages)
       end
     else
-      render_error(:not_found, rental.errors.messages)
+      render_error(:not_found, ["No matching rental found for this customer and movie"])
     end
   end
 

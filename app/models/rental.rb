@@ -7,7 +7,6 @@ class Rental < ApplicationRecord
   DATE = Date.today
 
   def is_available?
-
     return self.movie.available_inventory > 0 if self.movie
   end
 

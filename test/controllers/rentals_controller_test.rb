@@ -111,10 +111,24 @@ describe RentalsController do
 
       checked_out_rental.checkin_date.must_be_nil
 
+    let(:rental) { rentals(:rental_3) }
+
+    let(:rental_params) {
+      { customer_id: rental.customer.id,
+        movie_id: rental.movie.id
+      }
+    }
+
+    it 'checks-in the correct rental with valid input params and updates the checkin date to today' do
+
+      rental.checkin_date.must_be_nil
+>>>>>>> Stashed changes
+
       post checkin_path, params: rental_params
 
       body = parse_json(expected_type: Hash)
 
+<<<<<<< Updated upstream
       expect(body.keys).must_include "rental_id"
       expect(checked_out_rental.checkin_date).must_equal Date.today
 
@@ -124,6 +138,34 @@ describe RentalsController do
     end
 
     it 'renders not_found and does not save rental if no rental information matches params' do
+=======
+      checked_in_rental = rentals(:rental_3)
+      expect(body.keys).must_include "rental_id"
+      expect(body["checkin_date"]).must_equal Date.today
+    end
+
+    it "renders not found status code and returns JSON with error messages if no rental matches were found" do
+
+      expect(rental.checkin_date).must_be_nil
+      rental_params[:movie_id] = 0
+
+      post checkin_path, params: rental_params
+
+      body = parse_json(expected_type: Hash, expected_status: :not_found)
+      expect(rental.checkin_date).must_equal nil
+      expect(body.keys).must_include "errors"
+
+    end
+
+    it 'renders not_found and does not save rental if no rental information matches params' do
+      expect(rental.checkin_date).must_be_nil
+
+      rental_params[:customer_id] = nil
+      post checkin_path, params: rental_params
+
+      body = parse_json(expected_type: Hash, expected_status: :bad_request)
+      expect(body.keys).must_include "errors"
+>>>>>>> Stashed changes
     end
 
 
