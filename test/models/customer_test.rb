@@ -110,6 +110,7 @@ describe Customer do
     it 'returns 0 if there are no movies checked out' do
       expect( mike_none_out.movies_checked_out_count ).must_equal 0
     end
+
   end
 
 end
