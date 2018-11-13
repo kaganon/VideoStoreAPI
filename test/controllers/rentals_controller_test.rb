@@ -98,18 +98,6 @@ describe RentalsController do
   end
 
   describe 'checkin' do
-    let(:rental) { rentals(:rental_1) }
-
-    let(:rental_params) {
-      { customer_id: Customer.first.id,
-        movie_id: Movie.first.id
-      }
-    }
-
-    it 'updates the correct rental with valid input params' do
-      checked_out_rental = rental
-
-      checked_out_rental.checkin_date.must_be_nil
 
     let(:rental) { rentals(:rental_3) }
 
@@ -122,13 +110,11 @@ describe RentalsController do
     it 'checks-in the correct rental with valid input params and updates the checkin date to today' do
 
       rental.checkin_date.must_be_nil
->>>>>>> Stashed changes
 
       post checkin_path, params: rental_params
 
       body = parse_json(expected_type: Hash)
 
-<<<<<<< Updated upstream
       expect(body.keys).must_include "rental_id"
       expect(checked_out_rental.checkin_date).must_equal Date.today
 
@@ -138,7 +124,7 @@ describe RentalsController do
     end
 
     it 'renders not_found and does not save rental if no rental information matches params' do
-=======
+
       checked_in_rental = rentals(:rental_3)
       expect(body.keys).must_include "rental_id"
       expect(body["checkin_date"]).must_equal Date.today
@@ -164,12 +150,12 @@ describe RentalsController do
       post checkin_path, params: rental_params
 
       body = parse_json(expected_type: Hash, expected_status: :bad_request)
-      expect(body.keys).must_include "errors"
->>>>>>> Stashed changes
+
     end
 
 
   end
+
 
 
 end

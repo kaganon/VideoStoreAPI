@@ -5,7 +5,7 @@ movie_1:
   title: Rails on Rails
   overview: This is a movie all about rails. It's railly railly awesome.
   release_date: 2020-09-02
-  inventory: 3
+  inventory: 2
 
 movie_2:
   id: 2
@@ -19,4 +19,4 @@ movie_3:
   title: Rubyist are the best
   overview: The most amazing ruby film you've ever dreamt of.
   release_date: 2012-01-20
-  inventory: 5
+  inventory: 1

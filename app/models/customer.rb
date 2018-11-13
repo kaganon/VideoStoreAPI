@@ -6,6 +6,7 @@ class Customer < ApplicationRecord
     self.rentals.each do |rental|
       return rental if rental.movie == movie
     end
+    return false
   end
 
   def movies_checked_out_count

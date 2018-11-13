@@ -19,20 +19,26 @@ describe Rental do
       rental.movie.must_be_nil
       expect(rental.valid?).wont_equal true
     end
+
+    it 'is valid with customer and movie ids present' do
+      expect(rental).must_be :valid?
+    end
   end
 
   # RELATIONS
   describe 'relations' do
-    let(:rental) { rentals(:rental_2) }
+    let(:movie) { movies(:movie_2) }
+    let(:customer) { customers(:customer_3) }
+    let(:rental) { rentals(:rental_2)}
 
     it 'can set a customer and movie' do
-      leo = Customer.first
-      titanic = Movie.first
-      rental = Rental.create(customer: leo, movie: titanic)
+      leo = customer
+      titanic = movie
+      new_rental = Rental.create(customer: leo, movie: titanic)
 
-      expect( rental.valid? ).must_equal true
-      expect( rental.customer ).must_equal leo
-      expect( rental.movie ).must_equal titanic
+      expect( new_rental.valid? ).must_equal true
+      expect( new_rental.customer ).must_equal leo
+      expect( new_rental.movie ).must_equal titanic
     end
 
     it "must relate to a movie" do
@@ -48,25 +54,34 @@ describe Rental do
 
   # CUSTOM METHODS
   describe 'is_available?' do
-    let(:rental) { rentals(:rental_1) }
+    let(:linda) { customers(:customer_4) }
+    let(:all_checked_out) { movies(:movie_3) }
+    let(:available_for_check_out) { movies(:movie_2) }
+    let(:rental_data) {
+      {
+        customer_id: linda.id,
+        movie_id: all_checked_out.id,
+      }
+    }
 
-    it 'returns false if rental.avalable_inventory is equal to zero' do
-      movie = rental.movie
-      movie.inventory = 0
+    it 'returns false if the movie for rental is not available' do
+      new_rental = Rental.create(rental_data)
 
-      expect( rental.is_available? ).must_equal false
+      expect( new_rental.is_available? ).must_equal false
     end
 
-    it 'returns false if rental.available_inventory is less than 0' do
-      movie = rental.movie
-      movie.inventory = -1
+    it 'returns true if the movie for rental is available' do
+      rental_data[:movie_id] = available_for_check_out.id
+      new_rental = Rental.create(rental_data)
 
-
-      expect( rental.is_available? ).must_equal false
+      expect( new_rental.is_available? ).must_equal true
     end
 
-    it 'returns true if rental.available_inventory is greater than 0' do
-      expect( rental.is_available? ).must_equal true
+    it 'returns false if the rental movie is nil' do
+      rental_data[:movie_id] = nil
+      new_rental = Rental.create(rental_data)
+
+      expect( new_rental.is_available? ).must_equal false
     end
   end
 
@@ -76,7 +91,7 @@ describe Rental do
     let(:movie) { movies(:movie_3) }
     let(:jackson) { customers(:customer_1) }
 
-    it 'returns current date when rental is valid' do
+    it "updates checkout date to today's date" do
       new_rental = Rental.create(customer: jackson, movie: movie)
 
       expect( new_rental.update_check_out_date ).must_equal DATE
@@ -87,7 +102,7 @@ describe Rental do
     let(:movie) { movies(:movie_3) }
     let(:jackson) { customers(:customer_1) }
 
-    it 'returns due date when rental is valid' do
+    it "updates the due date to 7 days from today's date" do
       new_rental = Rental.create(customer: jackson, movie: movie)
 
       expect( new_rental.update_due_date ).must_equal (DATE + 7)
@@ -95,10 +110,11 @@ describe Rental do
   end
 
   describe 'update_checkin_date' do
-    let(:rental) { rentals(:rental_2) }
+    let(:movie) { movies(:movie_3) }
+    let(:jackson) { customers(:customer_1) }
 
-    it 'returns due date when rental is valid' do
-      rental.checkin_date = Date.today
+    it "updates checkin date to today's date" do
+      rental = Rental.create(customer: jackson, movie: movie)
 
       expect( rental.update_checkin_date ).must_equal DATE
     end

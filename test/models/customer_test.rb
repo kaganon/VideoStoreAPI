@@ -65,15 +65,17 @@ describe Customer do
   # RELATIONS
   describe 'relations' do
     let(:jackson) { customers(:customer_2) }
-    let(:rental) { rentals(:rental_2) }
+    let(:titanic) { movies(:movie_1) }
+    let(:finding_nemo) { movies(:movie_2) }
 
-    it 'can set a rental' do
-      titanic = Movie.first
-      blockbuster = Rental.create(customer: jackson, movie: titanic)
+    it 'can set and relate to rentals' do
+      blockbuster_1 = Rental.create(customer: jackson, movie: titanic)
+      blockbuster_2 = Rental.create(customer: jackson, movie: finding_nemo)
 
-      expect( blockbuster.valid? ).must_equal true
-      expect( blockbuster.customer ).must_equal jackson
-      expect( blockbuster.customer ).must_be_kind_of Customer
+      expect( jackson ).must_respond_to :rentals
+      jackson.rentals.each do |rental|
+        rental.must_be_kind_of Rental
+      end
 
     end
   end
@@ -82,24 +84,29 @@ describe Customer do
   describe 'find_rental' do
     let(:molly) { customers(:customer_1) }
     let(:movie) { movies(:movie_1) }
-    let(:rental) { rentals(:rental_1) }
+    let(:matching_rental) { rentals(:rental_1) }
 
-    it 'returns a rental if belongs to customer' do
-      expect( molly.find_rental(movie) ).must_equal rental
+    it 'returns the correct matching rental from the matching movie found' do
+      expect( molly.find_rental(movie) ).must_equal matching_rental
+    end
+
+    it "returns false if no rental matches movies from customer's rentals" do
+      no_movie = nil
+
+      expect( molly.find_rental(no_movie) ).must_equal false
     end
   end
 
   describe 'movies_checked_out_count' do
-    let(:molly) { customers(:customer_1) }
-    let(:movie) { movies(:movie_1) }
-    let(:rental) { rentals(:rental_1) }
+    let(:molly_three_out) { customers(:customer_1) }
+    let(:mike_none_out) { customers(:customer_3) }
 
-    it "returns zero if checkout.count or checkin.count == zero" do
+    it "returns the correct movies checked out count" do
+      expect( molly_three_out.movies_checked_out_count ).must_equal 3
+    end
 
-      molly.rentals.destroy_all
-
-      expect( molly.movies_checked_out_count ).must_equal 0
-      expect( molly.rentals.count ).must_equal 0
+    it 'returns 0 if there are no movies checked out' do
+      expect( mike_none_out.movies_checked_out_count ).must_equal 0
     end
   end
 
