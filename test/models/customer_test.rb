@@ -94,13 +94,21 @@ describe Customer do
     let(:movie) { movies(:movie_1) }
     let(:rental) { rentals(:rental_1) }
 
-    it "returns zero if checkout.count or checkin.count == zero" do
+    it "accurately returns checkout.count for valid customer" do
 
-      molly.rentals.destroy_all
+      # molly.rentals.destroy_all
 
-      expect( molly.movies_checked_out_count ).must_equal 0
-      expect( molly.rentals.count ).must_equal 0
+      expect( molly.movies_checked_out_count ).must_equal 3
+      expect( molly.rentals.count ).must_equal 3
     end
+    # 
+    # it "returns " do
+    #
+    #   molly.rentals.destroy_all
+    #
+    #   expect( molly.movies_checked_out_count ).must_equal 0
+    #   expect( molly.rentals.count ).must_equal 0
+    # end
   end
 
 end
