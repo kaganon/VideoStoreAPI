@@ -14,36 +14,13 @@ describe RentalsController do
     return body
   end
 
-  # delete this
-  describe "index" do
-    it "is a real working route" do
-      get rentals_path
-
-      body = parse_json(expected_type: Array)
-
-      expect(body.length).must_equal Rental.count
-
-      body.each do |rental|
-        expect(rental.keys.sort).must_equal RENTAL_FIELDS
-      end
-    end
-
-    it "returns an empty array when there are no customers" do
-      Rental.destroy_all
-
-      get rentals_path
-
-      body = parse_json(expected_type: Array)
-
-      expect(body).must_equal []
-    end
-  end
-
-
   describe 'checkout' do
+    let(:mimi) { customers(:customer_4) }
+    let(:jaws) { movies(:movie_2) }
+
     let(:rental_params) {
-      { customer_id: Customer.first.id,
-        movie_id: Movie.first.id
+      { customer_id: mimi.id,
+        movie_id: jaws.id
       }
     }
     it "creates a new rental and returns JSON with an id when give valid input" do
@@ -66,18 +43,7 @@ describe RentalsController do
 
     it "renders bad_request status code and returns JSON with error messages if the rental was not successfully saved" do
 
-      original_last_rental = Rental.last
-      rental_params[:customer_id] = 0
-
-      expect {
-        post checkout_path, params: rental_params
-      }.wont_change('Rental.count')
-
-      rental = Rental.last
-      body = parse_json(expected_type: Hash, expected_status: :bad_request)
-      expect(rental).must_equal original_last_rental
-      expect(body.keys).must_include "errors"
-
+      # QUESTION: not sure how to setup the controller test and make saving the rental fail. Checkout date and due date is not a required validation until trying to save upon checkout. The rental.save method would fail if checkout_date and due_date somehow returns nil or false upon checkout, and therefore return the error messages...but this is difficult to test in the controller tests using the post checkout_path bc valid params would always save the rental.
     end
 
     it 'renders not_found and does not save rental if no rental information matches params' do
@@ -93,6 +59,7 @@ describe RentalsController do
       body = parse_json(expected_type: Hash, expected_status: :not_found)
       expect(rental).must_equal original_last_rental
       expect(body.keys).must_include "errors"
+      expect(body.values.first["rental_id"]).must_equal ["Cannot checkout movie: no available inventory for checkout"]
 
     end
   end
@@ -102,35 +69,33 @@ describe RentalsController do
     let(:rental) { rentals(:rental_3) }
 
     let(:rental_params) {
-      { customer_id: rental.customer.id,
-        movie_id: rental.movie.id
+      { customer_id: rental.customer.id, # id: 1
+        movie_id: rental.movie.id  # id: 2
       }
     }
 
     it 'checks-in the correct rental with valid input params and updates the checkin date to today' do
 
-      rental.checkin_date.must_be_nil
+      to_check_in_rental = Rental.find_by(customer_id: 1, movie_id: 2)
+
+      to_check_in_rental.checkin_date.must_be_nil
 
       post checkin_path, params: rental_params
 
       body = parse_json(expected_type: Hash)
 
+      checked_in_rental = Rental.find_by(customer_id: 1, movie_id: 2)
+
       expect(body.keys).must_include "rental_id"
-      expect(checked_out_rental.checkin_date).must_equal Date.today
+      expect(checked_in_rental.checkin_date).must_equal Date.today
 
     end
 
     it "renders bad_request status code and returns JSON with error messages if the rental was not successfully saved" do
+      # same question as above
     end
 
-    it 'renders not_found and does not save rental if no rental information matches params' do
-
-      checked_in_rental = rentals(:rental_3)
-      expect(body.keys).must_include "rental_id"
-      expect(body["checkin_date"]).must_equal Date.today
-    end
-
-    it "renders not found status code and returns JSON with error messages if no rental matches were found" do
+    it "renders not found status code and returns JSON with error message if no movie matches movie params" do
 
       expect(rental.checkin_date).must_be_nil
       rental_params[:movie_id] = 0
@@ -138,21 +103,24 @@ describe RentalsController do
       post checkin_path, params: rental_params
 
       body = parse_json(expected_type: Hash, expected_status: :not_found)
-      expect(rental.checkin_date).must_equal nil
+      expect(rental.checkin_date).must_be_nil
       expect(body.keys).must_include "errors"
+      expect(body.values.first["rental_id"]).must_equal ["No matching rental found for this customer and movie"]
 
     end
 
-    it 'renders not_found and does not save rental if no rental information matches params' do
+    it 'renders not found status code and returns JSON with error message if no customer matches customer params' do
       expect(rental.checkin_date).must_be_nil
 
       rental_params[:customer_id] = nil
+
       post checkin_path, params: rental_params
 
-      body = parse_json(expected_type: Hash, expected_status: :bad_request)
-
+      body = parse_json(expected_type: Hash, expected_status: :not_found)
+      expect(rental.checkin_date).must_be_nil
+      expect(body.keys).must_include "errors"
+      expect(body.values.first["rental_id"]).must_equal ["No matching rental found for this customer and movie"]
     end
-
 
   end
 

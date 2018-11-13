@@ -77,6 +77,8 @@ describe Customer do
         rental.must_be_kind_of Rental
       end
 
+      expect( jackson.rentals.count ).must_equal 3
+      # the newly created rentals + 1 rental in yml file
     end
   end
 

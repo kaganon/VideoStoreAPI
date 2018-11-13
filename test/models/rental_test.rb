@@ -20,7 +20,10 @@ describe Rental do
       expect(rental.valid?).wont_equal true
     end
 
-    it 'is valid with customer and movie ids present' do
+    it 'is valid with only customer and movie ids present' do
+      rental.checkout_date = nil
+      rental.due_date = nil
+
       expect(rental).must_be :valid?
     end
   end
@@ -29,6 +32,7 @@ describe Rental do
   describe 'relations' do
     let(:movie) { movies(:movie_2) }
     let(:customer) { customers(:customer_3) }
+
     let(:rental) { rentals(:rental_2)}
 
     it 'can set a customer and movie' do
@@ -94,7 +98,9 @@ describe Rental do
     it "updates checkout date to today's date" do
       new_rental = Rental.create(customer: jackson, movie: movie)
 
-      expect( new_rental.update_check_out_date ).must_equal DATE
+      new_rental.update_check_out_date
+
+      expect( new_rental.checkout_date ).must_equal DATE
     end
   end
 
@@ -105,7 +111,9 @@ describe Rental do
     it "updates the due date to 7 days from today's date" do
       new_rental = Rental.create(customer: jackson, movie: movie)
 
-      expect( new_rental.update_due_date ).must_equal (DATE + 7)
+      new_rental.update_due_date
+
+      expect( new_rental.due_date ).must_equal (DATE + 7)
     end
   end
 
@@ -116,7 +124,9 @@ describe Rental do
     it "updates checkin date to today's date" do
       rental = Rental.create(customer: jackson, movie: movie)
 
-      expect( rental.update_checkin_date ).must_equal DATE
+      rental.update_checkin_date
+
+      expect( rental.checkin_date ).must_equal DATE
     end
   end
 

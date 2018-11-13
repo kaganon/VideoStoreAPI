@@ -1,12 +1,5 @@
 class RentalsController < ApplicationController
 
-  # JUST FOR DEBUGGING
-  def index
-    rentals = Rental.all
-
-    render json: jsonify(rentals)
-  end
-
   def checkout
     rental = Rental.new(rental_params)
 
@@ -22,7 +15,7 @@ class RentalsController < ApplicationController
       end
 
     else
-      render_error(:not_found, { rental_id: ["Cannot checkout movie: no movie available for checkout "] })
+      render_error(:not_found, { rental_id: ["Cannot checkout movie: no available inventory for checkout"] })
     end
   end
 
@@ -31,9 +24,9 @@ class RentalsController < ApplicationController
     customer = Customer.find_by(id: params[:customer_id])
     movie = Movie.find_by(id: params[:movie_id])
 
-    rental = customer.find_rental(movie)
+    if customer && movie
 
-    if rental
+      rental = customer.find_rental(movie)
       rental.update_checkin_date
 
       if rental.save
@@ -43,7 +36,7 @@ class RentalsController < ApplicationController
       end
 
     else
-      render_error(:not_found, ["No matching rental found for this customer and movie"])
+      render_error(:not_found, { rental_id: ["No matching rental found for this customer and movie"] })
     end
   end
 
@@ -52,9 +45,5 @@ class RentalsController < ApplicationController
 
   def rental_params
     params.permit(:customer_id, :movie_id)
-  end
-
-  def jsonify(rental_data)
-    return rental_data.as_json(except: [:created_at, :updated_at])
   end
 end

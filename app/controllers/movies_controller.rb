@@ -28,13 +28,11 @@ class MoviesController < ApplicationController
   private
 
   def movie_params
-    # How do I test this?
     params.permit(:title, :overview, :release_date, :inventory, :available_inventory)
   end
 
 
   def get_json(movie_data)
-    # How do I test this?
     return movie_data.as_json(only: [:id, :title, :overview, :release_date, :inventory], methods: :available_inventory)
   end
 end

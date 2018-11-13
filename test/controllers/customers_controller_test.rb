@@ -39,7 +39,8 @@ describe CustomersController do
   end
 
   describe 'show' do
-    let(:customer) { customers(:customer_1) }
+    let(:customer) { customers(:customer_1) } # has 3 movies checked out in yml
+
     it 'is a real working route and returns JSON for an existing customer' do
 
       get customer_path(customer.id)
@@ -48,6 +49,11 @@ describe CustomersController do
 
       expect( body["id"] ).must_equal customer["id"]
       expect( body["name"] ).must_equal customer["name"]
+      expect( body["registered_at"]).must_equal customer["registered_at"]
+      expect( body["postal_code"] ).must_equal customer["postal_code"]
+      expect( body["phone"] ).must_equal customer["phone"]
+
+      expect( body["movies_checked_out_count"] ).must_equal 3
     end
 
 
@@ -59,6 +65,7 @@ describe CustomersController do
       body = parse_json(expected_type: Hash, expected_status: :not_found)
 
       expect(body["errors"]).must_include "customer_id"
+      expect(body.values.first["customer_id"]).must_equal ["Customer does not exist"]
     end
   end
 

@@ -10,7 +10,7 @@ class CustomersController < ApplicationController
     customer = Customer.find_by(id: params[:id])
 
     if customer
-      render json: get_json(customer)
+      render json: get_json(customer), status: :ok
     else
       render_error(:not_found, {customer_id: ["Customer does not exist"] } )
     end

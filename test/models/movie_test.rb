@@ -54,6 +54,8 @@ describe Movie do
       titanic.rentals.each do |rental|
         rental.must_be_kind_of Rental
       end
+      expect( titanic.rentals.count ).must_equal 5
+      # the 2 new rentals + 3 rentals in the yml file
     end
 
   end
