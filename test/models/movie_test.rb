@@ -43,15 +43,21 @@ describe Movie do
   # RELATIONS
   describe 'relations' do
     let(:titanic) { movies(:movie_2) }
+    let(:jackson) { customers(:customer_2) }
+    let(:avery) { customers(:customer_4) }
 
-    it 'can set a rental' do
-      jackson = Customer.first
-      blockbuster = Rental.create(customer: jackson, movie: titanic)
+    it 'can set and relate to rentals' do
+      blockbuster_1 = Rental.create(customer: jackson, movie: titanic)
+      blockbuster_2 = Rental.create(customer: avery, movie: titanic)
 
-      expect( blockbuster.valid? ).must_equal true
-      expect( blockbuster.movie ).must_equal titanic
-      expect( blockbuster.movie ).must_be_kind_of Movie
+      expect( titanic ).must_respond_to :rentals
+      titanic.rentals.each do |rental|
+        rental.must_be_kind_of Rental
+      end
+      expect( titanic.rentals.count ).must_equal 5
+      # the 2 new rentals + 3 rentals in the yml file
     end
+
   end
 
   # CUSTOM METHODS
@@ -67,6 +73,7 @@ describe Movie do
     it 'returns 0 if all movies checked out' do
       expect( no_available_movie.available_inventory ).must_equal 0
     end
+
   end
 
 

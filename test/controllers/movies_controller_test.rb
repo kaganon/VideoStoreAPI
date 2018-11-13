@@ -47,7 +47,7 @@ describe MoviesController do
 
   describe 'show' do
     it 'is a real working route and returns JSON for an existing movie' do
-      movie = Movie.first
+      movie = Movie.first # 0 available inventory, per yml
 
       get movie_path(movie.id)
 
@@ -56,8 +56,12 @@ describe MoviesController do
       movie.release_date = movie.release_date.to_s
       movie.save
 
-        expect(body["id"]).must_equal movie["id"]
-        expect(body["title"]).must_equal movie["title"]
+      expect(body["id"]).must_equal movie["id"]
+      expect(body["title"]).must_equal movie["title"]
+      expect(body["release_date"].to_s).must_equal movie["release_date"].to_s
+      expect(body["overview"]).must_equal movie["overview"]
+
+      expect( body["available_inventory"] ).must_equal 0
     end
 
 
@@ -69,6 +73,7 @@ describe MoviesController do
       body = check_response(expected_type: Hash, expected_status: :not_found)
 
       expect(body["errors"]).must_include "movie_id"
+      expect(body.values.first["movie_id"]).must_equal ["No such movie exists"]
     end
   end
 
@@ -99,19 +104,63 @@ describe MoviesController do
       must_respond_with :success
     end
 
-    it "returns an error for invalid movie data" do
-      # arrange
+    it "returns an error for invalid movie title" do
       movie_data["title"] = nil
 
       expect {
         post movies_path, params: movie_data
-      }.wont_change "Movie.count"
+      }.wont_change("Movie.count")
 
       body = JSON.parse(response.body)
 
       expect(body).must_be_kind_of Hash
       expect(body).must_include "errors"
       expect(body["errors"]).must_include "title"
+      must_respond_with :bad_request
+    end
+
+    it "returns an error for invalid movie overview" do
+      movie_data["overview"] = nil
+
+      expect {
+        post movies_path, params: movie_data
+      }.wont_change("Movie.count")
+
+      body = JSON.parse(response.body)
+
+      expect(body).must_be_kind_of Hash
+      expect(body).must_include "errors"
+      expect(body["errors"]).must_include "overview"
+      must_respond_with :bad_request
+    end
+
+    it "returns an error for invalid movie release_date" do
+      movie_data["release_date"] = nil
+
+      expect {
+        post movies_path, params: movie_data
+      }.wont_change("Movie.count")
+
+      body = JSON.parse(response.body)
+
+      expect(body).must_be_kind_of Hash
+      expect(body).must_include "errors"
+      expect(body["errors"]).must_include "release_date"
+      must_respond_with :bad_request
+    end
+
+    it "returns an error for invalid movie inventory" do
+      movie_data["inventory"] = nil
+
+      expect {
+        post movies_path, params: movie_data
+      }.wont_change("Movie.count")
+
+      body = JSON.parse(response.body)
+
+      expect(body).must_be_kind_of Hash
+      expect(body).must_include "errors"
+      expect(body["errors"]).must_include "inventory"
       must_respond_with :bad_request
     end
   end
